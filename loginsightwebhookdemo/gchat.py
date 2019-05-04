@@ -24,14 +24,77 @@ def gchat(APPKEY=None, TOKEN=None, SPACEID=None):
     GCHATURL = 'https://chat.googleapis.com/v1/spaces/%s/messages?key=%s&token=%s' % (SPACEID, APPKEY, TOKEN)
 
     a = parse(request)
-
     payload = {
-    "text": a['moreinfo']
-    }
+		"cards": [
+			{
+				"header": {
+					"title": a['AlertName'],
+					"subtitle": "https://loginsight.gra.vulog.local",
+					"imageUrl": "https://avatars2.githubusercontent.com/u/9042993?s=400&v=4"
+				},
+				"sections": [
+					{
+						"widgets": [
+							{
+								"keyValue": {
+									"topLabel": "Hits Number",
+									"content": a['NumHits']
+								}
+							},
+							{
+								"keyValue": {
+									"topLabel": "More results:",
+									"content": a['HasMoreResults']
+								}
+							}
+						]
+					},
+					{
+						"header": "Description",
+						"widgets": [
+							{
+								"textParagraph": {
+                						"text": a['info']
+              				}
+							}
+						]
+					},
+					{
+						"widgets": [
+							{
+								"buttons": [
+									{
+										"textButton": {
+											"text": "VIEW ALERT",
+											"onClick": {
+												"openLink": {
+													"url": a['url']
+												}
+											}
+										}
+									},
+									{
+										"textButton": {
+											"text": "EDIT ALERT",
+											"onClick": {
+												"openLink": {
+													"url": a['editurl']
+												}
+											}
+										}
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
 
-    # Defaults to Content-type: application/json
+
+# Defaults to Content-type: application/json
     # If changed you must specify the content-type manually
     headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
-    if not headers:
-        headers = None
+
     return callapi(GCHATURL, 'post', json.dumps(payload), headers)
